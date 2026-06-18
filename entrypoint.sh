@@ -1,16 +1,19 @@
 #!/bin/bash
 set -e
 
-# Verifica se é a primeira execução
+echo "🚀 Iniciando Pi-hole no Render..."
+
+# Verifica se o Pi-hole já está configurado
 if [ ! -f /etc/pihole/setupVars.conf ]; then
     echo "📝 Primeira execução - Configurando Pi-hole..."
     
+    # Aguarda o Pi-hole iniciar
+    sleep 5
+    
     # Define a senha
     if [ -n "$WEBPASSWORD" ]; then
-        pihole -a -p "$WEBPASSWORD"
-    else
-        # Senha padrão se não definida
-        pihole -a -p admin123
+        echo "🔑 Definindo senha do Pi-hole..."
+        pihole -a -p "$WEBPASSWORD" || echo "⚠️ Senha já definida ou erro ao definir"
     fi
     
     # Marca que já foi configurado
