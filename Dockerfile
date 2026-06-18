@@ -1,11 +1,7 @@
 FROM adguard/adguardhome:latest
 
-# Mantém tudo padrão
-EXPOSE 80/tcp 443/tcp
+# Expõe as portas necessárias
+EXPOSE 8080/tcp 53/udp 53/tcp
 
-# Healthcheck na interface web
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD wget -qO- http://localhost:80/ || exit 1
-
-# Comando padrão
-CMD ["/opt/adguardhome/AdGuardHome", "-s", "run"]
+# Comando de inicialização simples, sem healthcheck
+CMD ["/opt/adguardhome/AdGuardHome", "-s", "run", "--bind-port", "8080", "--no-check-update"]
