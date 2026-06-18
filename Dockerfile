@@ -1,7 +1,11 @@
-FROM adguard/adguardhome:latest
+FROM adguard/adguardhome:edge
 
-# Expõe as portas necessárias
+# Portas
 EXPOSE 8080/tcp 53/udp 53/tcp
 
-# Comando de inicialização simples, sem healthcheck
-CMD ["/opt/adguardhome/AdGuardHome", "-s", "run", "--bind-port", "8080", "--no-check-update"]
+# Define variáveis de ambiente
+ENV BIND_PORT=8080 \
+    BIND_HOST=0.0.0.0
+
+# Comando simplificado
+CMD ["--bind-port", "8080", "--no-check-update"]
