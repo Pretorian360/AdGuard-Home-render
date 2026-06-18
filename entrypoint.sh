@@ -3,11 +3,19 @@ set -e
 
 echo "🚀 Forçando configuração do Pi-hole..."
 
-# Força a senha a cada inicialização
-echo "WEBPASSWORD=$WEBPASSWORD" > /etc/pihole/setupVars.conf
-echo "PIHOLE_DNS_1=1.1.1.1" >> /etc/pihole/setupVars.conf
-echo "PIHOLE_DNS_2=8.8.8.8" >> /etc/pihole/setupVars.conf
-echo "DNSMASQ_LISTENING=all" >> /etc/pihole/setupVars.conf
+# Remove o arquivo antigo se existir
+rm -f /etc/pihole/setupVars.conf
+
+# Cria o arquivo com a senha correta
+cat > /etc/pihole/setupVars.conf << EOF
+WEBPASSWORD=${WEBPASSWORD:-admin123}
+PIHOLE_DNS_1=1.1.1.1
+PIHOLE_DNS_2=8.8.8.8
+DNSMASQ_LISTENING=all
+EOF
+
+# Mostra a senha configurada (para debug)
+echo "✅ Senha configurada: ${WEBPASSWORD:-admin123}"
 
 # Inicia o Pi-hole
 exec /usr/local/bin/pihole start
