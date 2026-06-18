@@ -1,7 +1,21 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
-echo "Iniciando AdGuard Home no Render..."
+# Verifica se é a primeira execução
+if [ ! -f /etc/pihole/setupVars.conf ]; then
+    echo "📝 Primeira execução - Configurando Pi-hole..."
+    
+    # Define a senha
+    if [ -n "$WEBPASSWORD" ]; then
+        pihole -a -p "$WEBPASSWORD"
+    else
+        # Senha padrão se não definida
+        pihole -a -p admin123
+    fi
+    
+    # Marca que já foi configurado
+    touch /etc/pihole/.configured
+fi
 
-# Tenta executar com permissões diferentes
-exec /opt/adguardhome/AdGuardHome -s run --bind-port 8080 --no-check-update
+# Inicia o Pi-hole
+exec /usr/local/bin/pihole start
