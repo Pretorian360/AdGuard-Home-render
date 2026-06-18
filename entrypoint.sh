@@ -1,26 +1,17 @@
 #!/bin/bash
 set -e
 
-echo "🚀 Resetando configuração do Pi-hole..."
+echo "🚀 Configurando Pi-hole..."
 
-# Para o Pi-hole se estiver rodando
-pkill -f pihole-FTL || true
+# Aguarda o Pi-hole iniciar
+/usr/local/bin/pihole start &
 
-# Remove TODOS os arquivos de configuração e banco de dados
-rm -rf /etc/pihole/*.db
-rm -rf /etc/pihole/*.conf
-rm -rf /etc/pihole/setupVars.conf
-rm -rf /etc/pihole/pihole-FTL.db
+# Aguarda alguns segundos para o serviço iniciar
+sleep 15
 
-# Cria o arquivo de configuração com a senha
-cat > /etc/pihole/setupVars.conf << EOF
-WEBPASSWORD=${WEBPASSWORD:-admin123}
-PIHOLE_DNS_1=1.1.1.1
-PIHOLE_DNS_2=8.8.8.8
-DNSMASQ_LISTENING=all
-EOF
+# Define a senha via comando
+echo "🔑 Definindo senha via comando pihole..."
+echo "${WEBPASSWORD:-admin123}" | pihole -a -p || echo "⚠️ Comando falhou, continuando..."
 
-echo "✅ Arquivo de configuração criado com senha: ${WEBPASSWORD:-admin123}"
-
-# Inicia o Pi-hole
-exec /usr/local/bin/pihole start
+# Mantém o container rodando
+wait
