@@ -5,7 +5,8 @@ ENV TZ=America/Sao_Paulo \
     WEB_PORT=8080 \
     PIHOLE_DNS_=1.1.1.1;8.8.8.8 \
     WEBPASSWORD=admin123 \
-    DNSMASQ_LISTENING=all
+    DNSMASQ_LISTENING=all \
+    DNSMASQ_USER=root
 
 # Portas
 EXPOSE 8080/tcp 53/udp 53/tcp
