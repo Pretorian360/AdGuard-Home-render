@@ -1,9 +1,20 @@
 FROM adguard/adguardhome:latest
 
-# Expoe portas padrão
-EXPOSE 53/tcp 53/udp 80/tcp 443/tcp 784/udp 853/tcp 8853/udp 5443/tcp
+# O Render já injeta as variáveis do .env
+# Não precisa definir ENV aqui, elas virão do ambiente
 
-# Diretório de dados persistente
-VOLUME ["/opt/adguardhome/conf", "/opt/adguardhome/work"]
+# Portas
+EXPOSE 53/tcp 53/udp 80/tcp 443/tcp
 
-CMD ["/opt/adguardhome/AdGuardHome", "-s", "run", "--no-check-update"]
+# Volumes (usando as variáveis do .env)
+VOLUME ["${ADGUARD_HOME_CONF_DIR}", "${ADGUARD_HOME_WORK_DIR}"]
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:${BIND_PORT:-80}/ || exit 1
+
+# Script de entrada que usa as ENVs
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
