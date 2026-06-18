@@ -1,6 +1,6 @@
 FROM pihole/pihole:latest
 
-# Configuração via variáveis de ambiente
+# Configurações
 ENV TZ=America/Sao_Paulo \
     WEB_PORT=80 \
     WEBPASSWORD=admin123 \
@@ -8,12 +8,15 @@ ENV TZ=America/Sao_Paulo \
     DNSMASQ_LISTENING=all \
     DNSMASQ_USER=root
 
+# Copia o entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Portas
 EXPOSE 80/tcp 443/tcp 53/udp 53/tcp
 
-# Healthcheck
+# Healthcheck - verifica o arquivo PHP
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD wget -qO- http://localhost:80/admin/ || exit 1
+  CMD wget -qO- http://localhost:80/admin/index.php || exit 1
 
-# Comando de inicialização
-CMD ["/usr/local/bin/pihole", "start"]
+ENTRYPOINT ["/entrypoint.sh"]
